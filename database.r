@@ -36,7 +36,8 @@ data_entreprise
 num_time_entreprise_conv <- data_convention %>% 
   group_by(entreprise_identifiant) %>%
   summarise("nb" = n())
-max(num_time_entreprise_conv)
+
+summary(num_time_entreprise_conv$nb)
 
 
 #COUNT TOTAL TTC FOR EACH CIE

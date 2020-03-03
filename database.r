@@ -26,8 +26,6 @@ data_entreprise <- data.frame(data_entreprise)
 
 
 
-
-
 # GET TTC des CIE EN FRANCE ===>>>> HIST
 ttc_cie_france <- filter(data_convention, pays == "FRANCE") %>%
   group_by(entreprise_identifiant) %>%
@@ -78,6 +76,34 @@ numbers_convention
 sum(numbers_convention$conventions_numbers)
 
 
+
+# 4) Who has most avantage -> bened_cat_code
+
+avantages_by_categories_remunaration <- data_remuneration %>%
+  group_by(benef_categorie_code) %>%
+  summarise("cat" = n())
+avantages_by_categories_remunaration
+
+plot(avantages_by_categories_remunaration$benef_categorie_code, avantages_by_categories_remunaration$cat,
+     main="avantages_by_categories_remunaration",
+     xlab="beneficier",
+     ylab="n")
+
+
+
+avantages_by_categories_avantage <- data_avantage %>%
+  group_by(benef_categorie_code)%>%
+  summarise("cat" = n())
+avantages_by_categories_avantage
+
+avantages_by_categories <- avantages_by_categories_remunaration %>% inner_join(avantages_by_categories_avantage, by=categ)
+avantages_by_categories
+#avantages_by_categories_joined
+
+
+
+
+
 #TODO bisbis get the 390 cie hidden
 
 
@@ -97,8 +123,8 @@ app$layout(
         figure=list(
           data=list(
             list(
-              x=list(2, 4, 7, 0),
-              y=list(18, 2, 3, 0),
+              x=avantages_by_categories_remunaration$benef_categorie_code,
+              y=avantages_by_categories_remunaration$cat,
               type='bar',
               name='SF'
             ),

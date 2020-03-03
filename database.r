@@ -28,7 +28,7 @@ data_entreprise <- data.frame(data_entreprise)
 
 
 
-# GET TTC des CIE EN FRANCE
+# GET TTC des CIE EN FRANCE ===>>>> HIST
 ttc_cie_france <- filter(data_convention, pays == "FRANCE") %>%
   group_by(entreprise_identifiant) %>%
   summarise("investisement de chaque boite" = n())
@@ -48,7 +48,7 @@ total_cie_france
 
 activity_area_france <- filter(data_entreprise, pays == "FRANCE") %>%
   group_by(secteur) %>%
-  summarise("secteurs d'activite" = n())
+  summarise("secteurs d'activite en france" = n())
 
 activity_area_france
 
@@ -56,7 +56,7 @@ activity_area_france
 
 activity_area <- data_entreprise %>%
   group_by(secteur) %>%
-  summarise("secteurs d'activite" = n())
+  summarise("secteurs d'activite dans le monde" = n())
 
 activity_area
 
@@ -68,90 +68,52 @@ object_convention <- data_convention %>%
 
 object_convention
 
+# d) id convention in all
 
-
-
-
-
-
-
-
-
-
-
-
-#COUNT NUMBER TIME WHEN CIE HAS CALLED 
-num_time_entreprise_conv <- data_convention %>% 
+numbers_convention <- data_convention %>%
   group_by(entreprise_identifiant) %>%
-  summarise("TOTALPRICE" = n())
-num_time_entreprise_conv$TOTALPRICE
+  summarise("conventions_numbers" = n())
+
+numbers_convention
+sum(numbers_convention$conventions_numbers)
 
 
-#COUNT TOTAL TTC FOR EACH CIE
-ttc_entreprise_conv <- data_convention %>%
-  group_by(entreprise_identifiant) %>%
-  count(entreprise_identifiant)
-ttc_entreprise_conv
-
-len(ttc_entreprise_conv)
+#TODO bisbis get the 390 cie hidden
 
 
 
-#COUNT TOTAL TTC FOR EACH COUNTRY
-count_entreprise_conv <- data_entreprise %>%
-  group_by(pays) %>%
-  summarise("PAYSCODE" = n())
+library(dash)
+library(dashCoreComponents)
+library(dashHtmlComponents)
 
-count_entreprise_conv
-total_for_each_country <- data.frame(count_entreprise_conv$PAYSCODE)
-#total_for_each_country <- names(total_for_each_country)[names(total_for_each_country)] <- "t"
-total_for_each_country
-percent <- (count_entreprise_conv / total_for_each_country * 100)
-percent
-#TODO a finir sortir les pays selon les pourcents
-sum(count_entreprise_conv$PAYSCODE)
+app <- Dash$new()
 
+app$layout(
+  htmlDiv(
+    list(
+      htmlH1('Hello Dash'),
+      htmlDiv(children = "Dash: A web application framework for R."),
+      dccGraph(
+        figure=list(
+          data=list(
+            list(
+              x=list(2, 4, 7, 0),
+              y=list(18, 2, 3, 0),
+              type='bar',
+              name='SF'
+            ),
+            list(
+              x=list(1, 2, 3),
+              y=list(2, 4, 5),
+              type='bar',
+              name='Montr\U{00E9}al'
+            )
+          ),
+          layout = list(title='Dash Data Visualization')
+        )
+      )
+    )
+  )
+)
 
-ttc_entreprise_conv <- data_convention %>%
-  group_by(entreprise_identifiant) %>%
-  count(entreprise_identifiant)
-ttc_entreprise_conv
-
-
-
-
-
-
-
-
-
-
-
-country <- sort(table(data_entreprise$pays),decreasing=TRUE) #renvoie le mode
-country
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# COUNT ALL CITYS IN FRANCE's CIE --------DB A CLEAN----------
-entrepriseFR<-filter(data_entreprise, pays == "FRANCE") %>%
-  group_by(ville) %>%
-  #count(ville) %>%
-  summarise("nombre_total_de_ville" = n())
-entrepriseFR$nombre_total_de_ville
+app$run_server()

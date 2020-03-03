@@ -1,4 +1,9 @@
+library(plotly)
 library(dplyr)
+library(dash)
+library(dashCoreComponents)
+library(dashHtmlComponents)
+
 
 file_avantage <- "/home/fakhredine/Documents/microsoft/R/brief/Group_project_3j/bases/declaration_avantage_2020_02_19_04_00.csv"
 data_avantage <- read.table(file_avantage, header = TRUE, sep = ";", quote = "\"",dec = ",", fill = TRUE, comment.char = "", encoding = "utf-8")
@@ -62,7 +67,7 @@ activity_area
 
 object_convention <- data_convention %>%
   group_by(conv_objet) %>%
-  summarise("objects conventions" = n())
+  summarise("objects_conventions" = n())
 
 object_convention
 
@@ -84,23 +89,15 @@ avantages_by_categories_remunaration <- data_remuneration %>%
   summarise("cat" = n())
 avantages_by_categories_remunaration
 
-plot(avantages_by_categories_remunaration$benef_categorie_code, avantages_by_categories_remunaration$cat,
-     main="avantages_by_categories_remunaration",
-     xlab="beneficier",
-     ylab="n")
-
-
-
 avantages_by_categories_avantage <- data_avantage %>%
   group_by(benef_categorie_code)%>%
   summarise("cat" = n())
 avantages_by_categories_avantage
 
-avantages_by_categories <- avantages_by_categories_remunaration %>% inner_join(avantages_by_categories_avantage, by=categ)
-avantages_by_categories
+#jointureici
+#avantages_by_categories <- avantages_by_categories_remunaration %>% inner_join(avantages_by_categories_avantage, by=)
+#avantages_by_categories
 #avantages_by_categories_joined
-
-
 
 
 
@@ -108,9 +105,19 @@ avantages_by_categories
 
 
 
-library(dash)
-library(dashCoreComponents)
-library(dashHtmlComponents)
+USPersonalExpenditure <- data.frame("Categorie"=rownames(USPersonalExpenditure), USPersonalExpenditure)
+data <- USPersonalExpenditure[,c('Categorie', 'X1960')]
+
+#'scatter', 'bar', 'box', 'heatmap', 'histogram', 'histogram2d', 'histogram2dcontour', 'contour', 'scatterternary', 'violin', 
+#''funnel', 'waterfall', 'image', 'pie', 'sunburst', 'treemap', 'funnelarea', 'scatter3d', 'surface', 'isosurface', 'volume', 
+#''mesh3d', 'cone', 'streamtube', 'scattergeo', 'choropleth', 'scattergl', 'splom', 'pointcloud', 'heatmapgl', 'parcoords', 'parcats',
+#' 'scattermapbox', 'choroplethmapbox', 'densitymapbox', 'sankey', 'indicator', 'table', 'carpet', 'scattercarpet', 'contourcarpet', 
+#' 'ohlc', 'candlestick', 'scatterpolar', 'scatterpolargl', 'barpolar', 'area'
+
+fig <- plot_ly(numbers_convention, labels = ~entreprise_identifiant, values = ~conventions_numbers, type = 'bar')
+fig <- fig %>% layout(title = 'Pie de toutes les conventions selon chaques entreprise',
+                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 
 app <- Dash$new()
 
@@ -126,20 +133,35 @@ app$layout(
               x=avantages_by_categories_remunaration$benef_categorie_code,
               y=avantages_by_categories_remunaration$cat,
               type='bar',
-              name='SF'
+              name='nombre total de personnes'
             ),
             list(
-              x=list(1, 2, 3),
-              y=list(2, 4, 5),
+              x=avantages_by_categories_avantage$benef_categorie_code,
+              y=avantages_by_categories_avantage$cat,
               type='bar',
-              name='Montr\U{00E9}al'
+              name='avantages_by_categories_avantage'
             )
           ),
-          layout = list(title='Dash Data Visualization')
+          layout = list(title='categories avantages')
         )
+      ),
+      dccGraph(
+        figure=list(
+          data=list(
+            list(
+              x=object_convention$conv_objet,
+              y=object_convention$objects_conventions,
+              type='bar',
+              name='object_convention'
+            )
+          ),
+          layout = list(title='nombre object convention')
+        )
+      ),
+      dccGraph(
+        figure=fig
       )
     )
   )
 )
-
 app$run_server()

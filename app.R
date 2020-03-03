@@ -35,16 +35,16 @@ app$layout(
               x=avantages_by_categories_remunaration$benef_categorie_code,
               y=avantages_by_categories_remunaration$cat,
               type='bar',
-              name='nombre total de personnes'
+              name='nombre total de personne ayant des avantages'
             ),
             list(
               x=avantages_by_categories_avantage$benef_categorie_code,
               y=avantages_by_categories_avantage$cat,
               type='bar',
-              name='avantages_by_categories_avantage'
+              name='nombre total de personnes'
             )
           ),
-          layout = list(title='categories avantages')
+          layout = list(title='PERSONNELS ET AVANTAGES')
         )
       ),
       dccGraph(
@@ -64,6 +64,10 @@ app$layout(
   ),htmlDiv(
     dccGraph(
       figure=fig
+    )
+  ),htmlDiv(
+    dccGraph(
+      figure=names
     )
   )
 )

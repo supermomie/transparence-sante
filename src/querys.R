@@ -76,11 +76,37 @@ avantages_by_categories_avantage
 
 
 
-USPersonalExpenditure <- data.frame("Categorie"=rownames(USPersonalExpenditure), USPersonalExpenditure)
-data <- USPersonalExpenditure[,c('Categorie', 'X1960')]
-
+fig <- plot_ly(numbers_convention, labels = ~entreprise_identifiant, values = ~conventions_numbers, type = 'bar')
+fig <- fig %>% layout(title = 'Pie de toutes les conventions selon chaques entreprise',
+                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 #'scatter', 'bar', 'box', 'heatmap', 'histogram', 'histogram2d', 'histogram2dcontour', 'contour', 'scatterternary', 'violin', 
 #''funnel', 'waterfall', 'image', 'pie', 'sunburst', 'treemap', 'funnelarea', 'scatter3d', 'surface', 'isosurface', 'volume', 
 #''mesh3d', 'cone', 'streamtube', 'scattergeo', 'choropleth', 'scattergl', 'splom', 'pointcloud', 'heatmapgl', 'parcoords', 'parcats',
 #' 'scattermapbox', 'choroplethmapbox', 'densitymapbox', 'sankey', 'indicator', 'table', 'carpet', 'scattercarpet', 'contourcarpet', 
 #' 'ohlc', 'candlestick', 'scatterpolar', 'scatterpolargl', 'barpolar', 'area'
+
+
+
+#Find all firstname, lastname and count how many times there are in the base
+all_names <- filter(data_avantage, benef_nom != "", benef_prenom != "") %>%
+  group_by(benef_nom, benef_prenom) %>%
+  summarise('count_each_time_each_person_is_in_db' = n())
+all_names <- all_names %>% data.frame(cbind(all_names$benef_nom, all_names$benef_prenom))
+all_names
+
+
+
+all_personals <- filter(data_avantage, benef_nom != "", benef_prenom != "") %>%
+  group_by(benef_nom, benef_prenom) %>%
+  summarise('c' = n())
+all_personals
+
+names <- plot_ly(data = all_personals, x = ~benef_nom, y = ~c)
+names
+
+
+#names <- plot_ly(all_names, labels = ~benef_nom, values = ~benef_prenom, type = 'pie')
+#names <- names %>% layout(title = 'Pie de toutes les conventions selon chaques entreprise',
+#                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+#                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))

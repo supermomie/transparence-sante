@@ -1,6 +1,6 @@
 library(dplyr)
 
-source("/home/fakhredine/Documents/microsoft/R/brief/Group_project_3j/database.R")
+source("/home/fakhredine/Documents/microsoft/R/transparance_sante/database.R")
 
 # GET TTC des CIE EN FRANCE ===>>>> HIST
 ttc_cie_france <- filter(data_convention, pays == "FRANCE") %>%

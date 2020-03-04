@@ -4,8 +4,8 @@ library(dashCoreComponents)
 library(dashHtmlComponents)
 
 
-source("/home/fakhredine/Documents/microsoft/R/brief/Group_project_3j/database.R")
-source("/home/fakhredine/Documents/microsoft/R/brief/Group_project_3j/src/querys.R")
+source("/home/fakhredine/Documents/microsoft/R/transparance_santedatabase.R")
+source("/home/fakhredine/Documents/microsoft/R/transparance_sante/src/querys.R")
 
 
 external_scripts <- list(

@@ -1,26 +1,24 @@
-source("/home/fakhredine/Documents/microsoft/R/transparance_sante/database.r")
-
 # Split DB in two (trainset, testset)
-splitdb<-function(base, n)
+splitdb<-function(base, n) # base db , n %
 {
   data(base)
   
-  ## 75% of the sample size
+  ## n% of the sample size
   smp_size <- floor(n * nrow(base))
   
   ## set the seed to make your partition reproducible
   set.seed(123)
   train_ind <- sample(seq_len(nrow(base)), size = smp_size)
   
-  #train <- base[train_ind, ]
-  test <- base[-train_ind, ]
-  return(test)
+  train <- base[train_ind, ]
+  return(train)
 }
 
 
-cleaningcolumns<-function(base, columns)
+clean<-function(base, columns)
 {
-  print(columns[1])
-  #clean >- filter(base, columns[,1] != "", columns[,2] != "")
-  #return(clean)
+  #print(columns[1])
+  clean <- filter(base, columns[,1] != "", columns[,2] != "")
+  return(clean)
 }
+print(paste(getwd(),"/Documents/microsoft/R/transparance_sante/", sep=""))

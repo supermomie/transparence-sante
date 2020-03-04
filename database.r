@@ -1,3 +1,4 @@
+
 source("/home/fakhredine/Documents/microsoft/R/transparance_sante/src/cleaning.R")
 
 file_avantage <- "/home/fakhredine/Documents/microsoft/R/transparance_sante/bases/declaration_avantage_2020_02_19_04_00.csv"
@@ -15,6 +16,7 @@ data_convention <- read.table(file_convention, header = TRUE, sep = ";", quote =
 data_convention <- data.frame(data_convention)
 set.seed(123)
 data_convention <- splitdb(data_convention, 0.25)
+
 data_convention
 
 

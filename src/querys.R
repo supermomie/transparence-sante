@@ -113,10 +113,6 @@ all_personals <- filter(data_avantage, benef_nom != "", benef_prenom != "") %>%
   summarise('c' = n())
 all_personals
 
-
-names <- plot_ly(data = all_names, x = ~benef_nom, y = ~count_each_time_each_person_is_in_db)
-names
-
 D=data.frame(table(data_remuneration$remu_montant_ttc))
 D
 
@@ -124,3 +120,36 @@ D
 #names <- names %>% layout(title = 'Pie de toutes les conventions selon chaques entreprise',
 #                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
 #                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+
+
+
+
+# FRANCE, CIE ID, BENEF_LIBEL, AVANT_MONTANT_TTC, AVANT_NATURE, SEMETRES
+
+
+
+
+avantages_cie <- filter(data_avantage, pays == "FRANCE") %>%
+  group_by(entreprise_identifiant, semestre, avant_nature) %>%
+  summarise("n" = n())
+
+avantages_cie
+
+#names <- plot_ly(avantages_cie, labels = ~semestre, values = ~n, type = 'pie')
+#names <- names %>% layout(title = 'Pie des semestres',
+#                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+#                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+avantages_cie$entreprise_identifiant <- as.numeric(levels(avantages_cie$entreprise_identifiant))[avantages_cie$entreprise_identifiant]
+avantages_cie$entreprise_identifiant
+
+names <- plot_ly(data = avantages_cie, x = ~avantages_cie$entreprise_identifiant, y = ~entreprise_identifiant)
+names
+
+
+
+type_nature <- data_avantage %>%
+  group_by(avant_nature) %>%
+  summarise("n" = n())
+type_nature

@@ -65,6 +65,16 @@ avantages_by_categories_avantage <- data_avantage %>%
   summarise("cat" = n())
 avantages_by_categories_avantage
 
+
+
+
+# scatterplot query
+
+q <- data_convention %>%
+  group_by(pays, conv_objet) %>%
+  summarise("n" = n())
+q
+
 #jointureici
 #avantages_by_categories <- avantages_by_categories_remunaration %>% inner_join(avantages_by_categories_avantage, by=)
 #avantages_by_categories
@@ -89,11 +99,12 @@ fig <- fig %>% layout(title = 'Pie de toutes les conventions selon chaques entre
 
 
 #Find all firstname, lastname and count how many times there are in the base
-all_names <- filter(data_avantage, benef_nom != "", benef_prenom != "") %>%
+all_names <- filter(data_remuneration,pays == "FRANCE", benef_nom != "" , benef_prenom != "", ) %>%
   group_by(benef_nom, benef_prenom) %>%
   summarise('count_each_time_each_person_is_in_db' = n())
-all_names <- all_names %>% data.frame(cbind(all_names$benef_nom, all_names$benef_prenom))
+#all_names <- all_names %>% data.frame(cbind(all_names$benef_nom, all_names$benef_prenom))
 all_names
+summary(all_names$count_each_time_each_person_is_in_db)
 
 
 
@@ -102,9 +113,12 @@ all_personals <- filter(data_avantage, benef_nom != "", benef_prenom != "") %>%
   summarise('c' = n())
 all_personals
 
-names <- plot_ly(data = all_personals, x = ~benef_nom, y = ~c)
+
+names <- plot_ly(data = all_names, x = ~benef_nom, y = ~count_each_time_each_person_is_in_db)
 names
 
+D=data.frame(table(data_remuneration$remu_montant_ttc))
+D
 
 #names <- plot_ly(all_names, labels = ~benef_nom, values = ~benef_prenom, type = 'pie')
 #names <- names %>% layout(title = 'Pie de toutes les conventions selon chaques entreprise',

@@ -1,4 +1,4 @@
-source("/home/fakhredine/Documents/microsoft/R/transparance_sante/database.R")
+source("/home/fakhredine/Documents/microsoft/R/transparance_sante/database.r")
 
 # Split DB in two (trainset, testset)
 splitdb<-function(base, n)
@@ -18,11 +18,9 @@ splitdb<-function(base, n)
 }
 
 
-cleaningnames<-function(base)
+cleaningcolumns<-function(base, columns)
 {
-  
+  print(columns[1])
+  #clean >- filter(base, columns[,1] != "", columns[,2] != "")
+  #return(clean)
 }
-
-
-
-

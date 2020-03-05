@@ -1,7 +1,7 @@
 library(dplyr)
 
-path = paste(getwd(),"/Documents/microsoft/R/transparance_sante/", sep="")
-source(paste(path, "database.r", sep=""))
+#path = paste(getwd(),"/Documents/microsoft/R/transparance_sante/", sep="")
+#source(paste(path, "database.r", sep=""))
 
 
 #1) Echele Mondial
@@ -15,9 +15,18 @@ mondial_scope
 
 activity_area_france <- filter(data_entreprise, pays == "FRANCE") %>%
   group_by(secteur) %>%
-  summarise("secteurs d'activite en france" = n())
+  summarise("count_activity_area_france" = n())
 
 activity_area_france
+
+fig_activity_area_france <- plot_ly(
+  x = activity_area_france$count_activity_area_france,
+  y = activity_area_france$secteur,
+  title= "tessst",
+  type = "bar"
+)
+fig_activity_area_france %>% layout(title = "Secteurs d'activite")
+fig_activity_area_france
 
 # 2-b) Activity area in All
 
@@ -26,6 +35,27 @@ activity_area <- data_entreprise %>%
   summarise("secteurs d'activite dans le monde" = n())
 
 activity_area
+
+
+# nom de toutes les entreprises en FRANCE
+
+all_cie_france <- data_entreprise %>%
+  group_by(pays) %>%
+  summarise("CIE_FR_NAME" = n())
+
+all_cie_france
+
+fig_all_cie_france <- plot_ly(
+  x = all_cie_france$pays,
+  y = all_cie_france$CIE_FR_NAME,
+  name = "SF Zoo",
+  type = "bar"
+)
+
+
+#fig_all_cie_france %>% layout(title = "Toutes les cie en FR")
+fig_all_cie_france
+#save(fig_all_cie_france) save the picture
 
 # GET TTC des CIE EN FRANCE ===>>>> HIST
 ttc_cie_france <- filter(data_convention, pays == "FRANCE") %>%
@@ -43,19 +73,43 @@ count_total_conventions_signe
 
 convention_per_year <- filter(select(data_convention, conv_date_signature)) %>%
   group_by(substring(data_convention$conv_date_signature,7,10)) %>%
-  summarise("n" = n())
+  summarise("nombre_de_convention_par_an" = n())
   #arrange(desc(n))
-convention_per_year <- tail(convention_per_year, 9)  
+convention_per_year <- tail(convention_per_year, 9)
+colnames(convention_per_year)[1] <- "annee"
 convention_per_year
 
-percent_per_year <- sapply(convention_per_year$n, function(v) {
+
+percent_per_year <- sapply(convention_per_year$nombre_de_convention_par_an, function(v) {
   return(v/count_total_conventions_signe$nombre_total_de_convention)
 })
 
+percent_per_year <- data.frame(percent_per_year) #transform to df
+percent_per_year$year <- convention_per_year #add column
+colnames(percent_per_year)
 percent_per_year <- data.frame(percent_per_year)
-percent_per_year$year <- convention_per_year
 percent_per_year
 
+fig <- fig %>% add_pie(data = percent_per_year, labels = percent_per_year[2], values = ~percent_per_year)
+fig <- fig %>% add_pie(data = percent_per_year, labels = percent_per_year[1], values = ~percent_per_year)
+
+fig <- fig %>% layout(title = "Pie Charts with Subplots", showlegend = F,
+                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+percent_per_year[1]
+percent_per_year[2]
+
+percent_per_year$year$annee
+percent_per_year$year$nombre_de_convention_par_an
+
+
+figconvpercent <- plot_ly(percent_per_year$year, labels = ~annee, values = ~nombre_de_convention_par_an, type = 'pie')
+figconvpercent <- figconvpercent %>% layout(title = 'Pie en % des conventions pour chaque annee',
+                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+figconvpercent
 
 #3)
 # a) Number CIE in FRANCE
@@ -93,10 +147,13 @@ avantages_by_categories_remunaration <- data_remuneration %>%
   summarise("cat" = n())
 avantages_by_categories_remunaration
 
-avantages_by_categories_avantage <- data_avantage %>%
+avantages_by_categories_avantage <- data_avantage_set_splited %>%
   group_by(benef_categorie_code)%>%
   summarise("cat" = n())
 avantages_by_categories_avantage
+
+
+
 
 
 
@@ -141,7 +198,7 @@ summary(all_names$count_each_time_each_person_is_in_db)
 
 
 
-all_personals <- filter(data_avantage, benef_nom != "", benef_prenom != "") %>%
+all_personals <- filter(data_avantage_set_splited, benef_nom != "", benef_prenom != "") %>%
   group_by(benef_nom, benef_prenom) %>%
   summarise('c' = n())
 all_personals
@@ -163,7 +220,7 @@ D
 
 
 
-avantages_cie <- filter(data_avantage, pays == "FRANCE") %>%
+avantages_cie <- filter(data_avantage_set_splited, pays == "FRANCE") %>%
   group_by(entreprise_identifiant, semestre, avant_nature) %>%
   summarise("n" = n())
 
@@ -178,11 +235,10 @@ avantages_cie$entreprise_identifiant <- as.numeric(levels(avantages_cie$entrepri
 avantages_cie$entreprise_identifiant
 
 names <- plot_ly(data = avantages_cie, x = ~avantages_cie$entreprise_identifiant, y = ~entreprise_identifiant)
-names
 
 
 
-type_nature <- data_avantage %>%
+type_nature <- data_avantage_set_splited_set_splited %>%
   group_by(avant_nature) %>%
   summarise("n" = n())
 type_nature
@@ -190,13 +246,8 @@ type_nature
 
 
 # pris repas
-
-
-pris_repas <- filter(data_avantage, benef_titre_code == "[DR]", benef_pays_code == "[FR]", avant_nature == c("REPAS", "Repas", "repas")) %>%
+pris_repas <- filter(data_avantage_set_splited, benef_titre_code == "[DR]", benef_pays_code == "[FR]", avant_nature == c("REPAS", "Repas", "repas")) %>%
   group_by(avant_nature) %>%
   summarise("n" = n())
   
 pris_repas
-
-
-

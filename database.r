@@ -1,11 +1,12 @@
-path = paste(getwd(),"/Documents/projects/transparence-sante/", sep="")
-source(paste(path, "src/cleaning.R", sep=""))
+path = paste(getwd(),"/Documents/microsoft/R/transparance_sante/", sep="")
+source(paste(path, "src/cleaning.r", sep=""))
 
 file_avantage <- paste(path, "bases/declaration_avantage_2020_02_19_04_00.csv", sep="")
 data_avantage <- read.table(file_avantage, header = TRUE, sep = ";", quote = "\"",dec = ",", fill = TRUE, comment.char = "", encoding = "utf-8")
 data_avantage <- data.frame(data_avantage)
-data_avantage <- splitdb(data_avantage, 0.25)
-data_avantage <- clean(data_avantage)
+data_avantage
+data_avantage_set_splited <- splitdb(data_avantage, 0.25)
+data_avantage_set_splited <- clean(data_avantage)
 #data_avantage
 
 

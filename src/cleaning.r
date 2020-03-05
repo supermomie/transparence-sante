@@ -36,15 +36,15 @@ clean<-function(base)
   c <- data.frame(lapply(base, function(v) {
     #print(typeof(v))
     #print(v)
-    if (v == "") {
-      return(base[-which(v == ""), ])
-    }
+    #if (v == "") {
+    #  return(base[-which(v == ""), ])
+    #}
     if (is.character(v)) {
       trim <- trimws(v)
       d <- mutate_all(trim, funs=toupper)
       print('un')
       return(d)
-    } 
+    }
     else {
       print('deux')
       return(v)

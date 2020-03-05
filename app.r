@@ -3,9 +3,10 @@ library(dash)
 library(dashCoreComponents)
 library(dashHtmlComponents)
 
+path = paste(getwd(),"/Documents/microsoft/R/transparance_sante/", sep="")
+source(paste(path, "database.r", sep=""))
+source(paste(path, "querys.r", sep=""))
 
-source("/home/fakhredine/Documents/microsoft/R/transparance_santedatabase.R")
-source("/home/fakhredine/Documents/microsoft/R/transparance_sante/src/querys.R")
 
 
 external_scripts <- list(
@@ -26,8 +27,8 @@ app <- Dash$new(
 app$layout(
   htmlDiv(
     list(
-      htmlH1('Hello Dash'),
-      htmlDiv(children = "Dash: A web application framework for R."),
+      htmlH1('KFC'),
+      htmlDiv(children = "NOTRE RAPPORT DE LA BASE PAS SI TRANSPARENTE QUE CA"),
       dccGraph(
         figure=list(
           data=list(
@@ -63,11 +64,19 @@ app$layout(
     )
   ),htmlDiv(
     dccGraph(
-      figure=fig
+      figure=fig_all_cie_france
     )
   ),htmlDiv(
     dccGraph(
       figure=names
+    )
+  ),htmlDiv(
+    dccGraph(
+      figure=figconvpercent #pie 
+    )
+  ),htmlDiv(
+    dccGraph(
+      figure=fig_activity_area_france #secteur d'activite
     )
   )
 )

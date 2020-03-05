@@ -5,11 +5,25 @@ library(dplyr)
 
 
 #1) Echele Mondial
-mondial_scope <- filter(select(data_entreprise, pays_code)) %>%
-  group_by(pays_code) %>%
+mondial_scope <- filter(select(data_entreprise, pays)) %>%
+  group_by(pays) %>%
   summarise("n" = n())
 
 mondial_scope
+
+
+fig_mondial_scope <- plot_ly(mondial_scope, labels = ~pays, values = ~n, type = "pie")
+fig_mondial_scope <- fig_mondial_scope %>% layout(title = "Nombre d'entreprise par pays",
+                                                    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                                                    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+fig_mondial_scope
+
+
+mondial_cie <- data_entreprise %>%
+  group_by(identifiant) %>%
+  summarise("n_total_cie" = n())
+mondial_cie
 
 # 2) Activity area in France
 
@@ -25,6 +39,7 @@ fig_activity_area_france <- plot_ly(
   title= "tessst",
   type = "bar"
 )
+
 fig_activity_area_france %>% layout(title = "Secteurs d'activite")
 fig_activity_area_france
 
@@ -32,9 +47,17 @@ fig_activity_area_france
 
 activity_area <- data_entreprise %>%
   group_by(secteur) %>%
-  summarise("secteurs d'activite dans le monde" = n())
+  summarise("n" = n())
 
 activity_area
+
+fig1_activity_area <- plot_ly(activity_area, labels = ~secteur, values = ~n, type = "pie")
+fig1_activity_area <- fig1_activity_area %>% layout(title = "Secteur d'activité des entreprises",
+                                                    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                                                    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+fig1_activity_area
+
 
 
 # nom de toutes les entreprises en FRANCE
@@ -45,16 +68,21 @@ all_cie_france <- data_entreprise %>%
 
 all_cie_france
 
-fig_all_cie_france <- plot_ly(
-  x = all_cie_france$pays,
-  y = all_cie_france$CIE_FR_NAME,
-  name = "SF Zoo",
-  type = "bar"
-)
+n <- data.frame(colnames(data_remuneration))
+n
 
+#figconvpercent <- plot_ly(percent_per_year$year, labels = ~annee, values = ~nombre_de_convention_par_an, type = 'pie')
+#figconvpercent <- figconvpercent %>% layout(title = 'Pie en % des conventions pour chaque annee',
+#                                            xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+#                                            yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 
-#fig_all_cie_france %>% layout(title = "Toutes les cie en FR")
+fig_all_cie_france <- plot_ly(all_cie_france, labels = ~pays, values = ~CIE_FR_NAME, type = "pie")
+fig_all_cie_france <- fig_all_cie_france %>% layout(title = "Pie du nombre d'entreprise dans chaque pays",
+                                            xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                                            yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
 fig_all_cie_france
+#fig_all_cie_france %>% layout(title = "Toutes les cie en FR")
 #save(fig_all_cie_france) save the picture
 
 # GET TTC des CIE EN FRANCE ===>>>> HIST
@@ -111,6 +139,38 @@ figconvpercent <- figconvpercent %>% layout(title = 'Pie en % des conventions po
 
 figconvpercent
 
+
+# N convention per CIE
+n_convention_per_cie <- data_convention %>%
+  group_by(entreprise_identifiant) %>%
+  summarise("n" = n())
+
+n_convention_per_cie
+
+fig_n_convention_per_cie <- plot_ly(n_convention_per_cie, labels = ~entreprise_identifiant, values = ~n, type = 'pie')
+fig_n_convention_per_cie <- fig_n_convention_per_cie %>% layout(title = 'Nombre de convention par entreprise',
+                                            xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                                            yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+fig_n_convention_per_cie
+
+
+# categories convention 
+convention_per_categories <- data_convention %>%
+  group_by(categorie) %>%
+  summarise("n" = n())
+
+convention_per_categories
+
+
+
+fig_convention_per_categories <- plot_ly(convention_per_categories, labels = ~categorie, values = ~n, type = 'bar')
+fig_convention_per_categories <- fig_convention_per_categories %>% layout(title = 'Nombre de convention par categorie',
+                                                                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                                                                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+fig_convention_per_categories
+
 #3)
 # a) Number CIE in FRANCE
 
@@ -154,8 +214,12 @@ avantages_by_categories_avantage
 
 
 
+# 4) Which CIE has most avantage -> bened_cat_code
 
-
+avantages_by_categories_remunaration_per_cie <- data_remuneration %>%
+  group_by(benef_categorie_code) %>%
+  summarise("cat" = n())
+avantages_by_categories_remunaration_per_cie
 
 
 # scatterplot query
@@ -223,7 +287,6 @@ D
 avantages_cie <- filter(data_avantage_set_splited, pays == "FRANCE") %>%
   group_by(entreprise_identifiant, semestre, avant_nature) %>%
   summarise("n" = n())
-
 avantages_cie
 
 #names <- plot_ly(avantages_cie, labels = ~semestre, values = ~n, type = 'pie')
@@ -251,3 +314,18 @@ pris_repas <- filter(data_avantage_set_splited, benef_titre_code == "[DR]", bene
   summarise("n" = n())
   
 pris_repas
+
+
+
+
+# remuneration par secteur d'activité
+
+rem_per_area_sector <- filter(data_remuneration, remu_montant_ttc != "", pays == "FRANCE") %>%
+  group_by(benef_categorie_code, remu_montant_ttc) %>%
+  summarise("n" = n())
+
+
+fig_rem_per_area_sector <- plot_ly(rem_per_area_sector, x = ~n, y = ~benef_categorie_code, color= ~remu_montant_ttc)
+
+
+fig_rem_per_area_sector

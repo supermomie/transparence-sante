@@ -60,6 +60,18 @@ app$layout(
           ),
           layout = list(title='nombre object convention')
         )
+      ),dccGraph(
+        figure=list(
+          data=list(
+            list(
+              x=n_convention_per_cie$entreprise_identifiant,
+              y=n_convention_per_cie$n,
+              type='bar',
+              name='object_convention'
+            )
+          ),
+          layout = list(title='nombre de convention par entreprise')
+        )
       )
     )
   ),htmlDiv(

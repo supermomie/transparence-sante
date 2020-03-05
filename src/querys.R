@@ -1,6 +1,8 @@
 library(dplyr)
 
-source("/home/fakhredine/Documents/microsoft/R/transparance_sante/database.R")
+
+path = paste(getwd(),"/Documents/projects/transparence-sante/", sep="")
+source(paste(path, "database.r", sep=""))
 
 # GET TTC des CIE EN FRANCE ===>>>> HIST
 ttc_cie_france <- filter(data_convention, pays == "FRANCE") %>%

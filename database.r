@@ -6,7 +6,7 @@ data_avantage <- read.table(file_avantage, header = TRUE, sep = ";", quote = "\"
 data_avantage <- data.frame(data_avantage)
 data_avantage
 data_avantage_set_splited <- splitdb(data_avantage, 0.25)
-data_avantage_set_splited <- clean(data_avantage)
+#data_avantage_set_splited <- clean(data_avantage)
 #data_avantage
 
 
